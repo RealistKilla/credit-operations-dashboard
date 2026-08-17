@@ -50,8 +50,13 @@ export function RiskBadge({
     <div className="inline-flex items-center gap-1.5 flex-wrap">
       <Badge variant={variant} size={size} className={className}>
         {showIcon && <Icon className="w-3 h-3 shrink-0" />}
-        <span>{showQualification ? config.qualification : config.label}</span>
+        <span>{config.label}</span>
       </Badge>
+      {showQualification && config.qualification && (
+        <span className="text-[11px] font-medium text-[#5A6B76]">
+          ({config.qualification})
+        </span>
+      )}
       {isThinFile && (
         <Badge variant="purple" size="sm" title="Thin credit history file">
           <FileWarning className="w-3 h-3" />
