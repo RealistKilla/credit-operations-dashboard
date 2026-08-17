@@ -3,6 +3,7 @@ name: Lula Credit Operations Design System
 colors:
   primary: '#0F253B'
   primary-container: '#1A3A54'
+  primary-light: '#1A3A54'
   on-primary: '#FFFFFF'
   accent: '#FF6D63'
   accent-hover: '#E85B51'
@@ -10,14 +11,17 @@ colors:
   sky-blue: '#61B8D8'
   sky-blue-light: '#EAF6FB'
   blue-action: '#268FB6'
-  surface: '#F2F9FC'
+  surface: '#F5F7F9'
   surface-card: '#FFFFFF'
   surface-card-hover: '#F8FCFE'
   on-surface: '#0F253B'
-  on-surface-variant: '#324754'
+  on-surface-variant: '#1A1A1A'
+  text-primary: '#1A1A1A'
+  text-muted: 'rgba(0, 0, 0, 0.5)'
   muted: '#5A6B76'
   subtle: '#839098'
-  border: '#CFD8DD'
+  border: 'rgba(0, 0, 0, 0.1)'
+  border-subtle: '#CFD8DD'
   border-light: '#E2EAF0'
   outline: 'rgba(207, 216, 221, 0.7)'
   success: '#1AAE4E'
@@ -28,55 +32,55 @@ colors:
   danger-bg: '#FFEAEF'
 typography:
   display-lg:
-    fontFamily: Termina, Montserrat, sans-serif
+    fontFamily: Termina, Montserrat, Proxima Nova, sans-serif
     fontSize: 36px
-    fontWeight: '700'
+    fontWeight: '800'
     lineHeight: 44px
     letterSpacing: -0.02em
   headline-lg:
-    fontFamily: Termina, Montserrat, sans-serif
+    fontFamily: Termina, Montserrat, Proxima Nova, sans-serif
     fontSize: 28px
     fontWeight: '700'
     lineHeight: 36px
     letterSpacing: -0.01em
   headline-md:
-    fontFamily: Termina, Montserrat, sans-serif
+    fontFamily: Termina, Montserrat, Proxima Nova, sans-serif
     fontSize: 20px
     fontWeight: '600'
     lineHeight: 28px
   title-lg:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 18px
     fontWeight: '700'
     lineHeight: 24px
   title-md:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 16px
     fontWeight: '600'
     lineHeight: 22px
   body-lg:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 16px
     fontWeight: '400'
     lineHeight: 24px
   body-md:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 14px
     fontWeight: '400'
     lineHeight: 20px
   body-sm:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 12px
     fontWeight: '400'
     lineHeight: 16px
   label-md:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 13px
     fontWeight: '600'
     lineHeight: 16px
     letterSpacing: 0.02em
   label-sm:
-    fontFamily: DM Sans, Montserrat, sans-serif
+    fontFamily: Proxima Nova, Montserrat, DM Sans, sans-serif
     fontSize: 11px
     fontWeight: '700'
     lineHeight: 14px
@@ -102,90 +106,72 @@ spacing:
 
 # Lula Credit Operations Dashboard — Design Specification
 
-## 1. Brand & Aesthetic Direction
-The Credit Operations Dashboard is designed for the credit underwriting and risk operations team at **Lula** (South Africa's digital SME funding platform). The design system adheres to Lula's official brand identity:
+## 1. Brand Tokens & brand.css Specification
 
-- **Midnight Navy (`#0F253B`)**: Represents authority, security, and stability. Used for primary navigation, top headers, strong typography, and primary metric emphasis.
-- **Coral Orange Accent (`#FF6D63`)**: Strategic brand action color. Used for primary action buttons, priority attention alerts, and key interactive focal points.
-- **Sky Blue (`#61B8D8`) & Blue (`#268FB6`)**: Secondary brand highlights used for score gauges, selected states, progress meters, and data visualizations.
-- **Light Blue/Grey Canvas (`#F2F9FC`)**: Reduces eye fatigue for analysts reviewing financial figures all day, providing contrast against crisp white containers.
-- **Elevated White Cards (`#FFFFFF`)**: Clean, rounded containers (`16px` radius) with soft ambient shadows (`0 4px 12px rgba(15, 37, 59, 0.06)`).
+The design adheres directly to Lula's official `brand.css` guidelines and design language:
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+/* Brand font is Proxima Nova. Montserrat is the closest available substitute. */
+:root {
+  --color-primary: #0F253B;
+  --color-primary-light: #1A3A54;
+  --color-surface: #F5F7F9;
+  --color-surface-white: #FFFFFF;
+  --color-text: #1A1A1A;
+  --color-text-muted: rgba(0, 0, 0, 0.5);
+  --color-border: rgba(0, 0, 0, 0.1);
+  --font-sans: 'Proxima Nova', 'Montserrat', system-ui, sans-serif;
+  
+  /* Lula Accent & Data Visualization Tokens */
+  --color-accent: #FF6D63;
+  --color-accent-hover: #E85B51;
+  --color-sky-blue: #61B8D8;
+  --color-blue: #268FB6;
+  --color-risk-low: #1AAE4E;
+  --color-risk-med: #D97706;
+  --color-risk-high: #FF274B;
+  --color-risk-pending: #64748B;
+}
+```
+
+### Color Palette Summary:
+- **`--color-primary` (`#0F253B`)**: Lula Midnight Navy — represents stability, authority, and trust. Used for headers, primary badges, navigation, and key headings.
+- **`--color-primary-light` (`#1A3A54`)**: Dark card sub-surfaces, hover states on primary navigation.
+- **`--color-accent` (`#FF6D63`)**: Vibrant Coral Orange — primary call-to-action color, attention alerts, and focal points.
+- **`--color-surface` (`#F5F7F9`)**: Canvas background, soft neutral tone preventing eye fatigue during lengthy credit assessment reviews.
+- **`--color-surface-white` (`#FFFFFF`)**: Card surfaces and elevated containers.
+- **`--color-text` (`#1A1A1A`)**: High-contrast body text for maximum readability.
+- **`--color-text-muted` (`rgba(0, 0, 0, 0.5)`)**: Subtext, labels, timestamps, and secondary metadata.
+- **`--color-border` (`rgba(0, 0, 0, 0.1)`)**: Crisp, subtle container boundaries.
 
 ---
 
-## 2. Layout & Information Architecture
+## 2. Layout & Navigation Hierarchy
 
-### A. Top Header
-- **Lula Credit Ops Brand Badge & Logo**
-- **Search Bar**: Quick search across businesses, registration numbers, and assessment IDs.
-- **Analyst Status & Context**: "Credit Operations Team | Live Environment"
-- **Top Actions**: Quick filter toggle, notification alert counter for high-risk / attention-required files, and analyst avatar.
+### A. Fixed Top Header
+- Lula Credit Operations logo & brand mark.
+- Global Search bar (searches company name, registration number, or assessment ID).
+- Environment status ("Live Ops") & Analyst profile.
 
-### B. Left-Hand Navigation Panel (260px fixed)
-1. **Overview**:
-   - Executive portfolio snapshot
-   - Quick KPI cards (Total businesses assessed, qualified count, high-risk flags, pending queue, total volume analysed)
-   - Actionable attention banner highlighting businesses requiring immediate credit decisions
-2. **Businesses (Dropdown Menu)**:
-   - Expandable company list:
-     - Acme Traders (Retail)
-     - Bright Construction (Construction)
-     - Cape Foods Distributors (Food & Beverage)
-     - Delta Logistics (Transport)
-     - Echo Tech Solutions (Technology)
-   - Clicking a business selects it and pulls up the complete credit profile, bank statements, and category score breakdown.
-3. **Assessments & Ranking**:
-   - Dynamic ranking view ordering companies by Credit Score, Risk Tier (Low / Medium / High / Pending), and Qualification Status.
-   - Filtering options (e.g. Qualified vs Review Needed vs Thin File vs Pending).
+### B. Left-Hand Panel (260px fixed width)
+1. **Overview**: Executive portfolio snapshot, active metrics, urgency alerts.
+2. **Businesses (Dropdown)**: Expandable selector listing all 5 companies:
+   - *Acme Traders* (Retail)
+   - *Bright Construction* (Construction)
+   - *Cape Foods Distributors* (Food & Beverage)
+   - *Delta Logistics* (Transport)
+   - *Echo Tech Solutions* (Technology)
+3. **Assessments & Qualification Ranking**: Multi-filter ranking table for underwriting qualification.
 
 ### C. Main Content Views
-1. **Summary Metrics Row**:
-   - **Total Assessed**: 5 businesses
-   - **Low Risk / Qualified**: 1 (`Cape Foods Distributors` - 741)
-   - **Medium Risk / In Review**: 2 (`Acme Traders` - 612, `Delta Logistics` - 558)
-   - **High Risk / Attention**: 1 (`Bright Construction` - 384, Thin File)
-   - **Pending Assessments**: 1 (`Echo Tech Solutions`)
-   - **Total Turnover Analysed**: R2.48M in bank statement credits
-
-2. **Attention / Priority Alert Banner**:
-   - Prominently warns the analyst about high risk & thin file statuses (e.g., Bright Construction) and pending data ingestion (Echo Tech Solutions).
-
-3. **Business Detail & Financial Deep Dive**:
-   - **Credit Score Gauge & Risk Band Tag**: Numerical score out of 850 with color-coded risk band badge (Low: Green, Medium: Amber, High: Red, Pending: Gray).
-   - **Category Score Breakdown**:
-     - Payment History
-     - Credit Utilisation
-     - Business Age
-     - Cash Flow
-     - Visual horizontal progress meters comparing individual category score against benchmark.
-   - **Bank Statement Financial Analysis**:
-     - Total Credits (Revenue Inflow)
-     - Total Debits (Expenses/Outflow)
-     - Net Cash Flow calculation (`Credits - Debits`)
-     - Cash Flow Margin & Monthly Average
-     - Months Analysed badge (3 months vs 6 months)
-
-4. **Interactive Ranked Assessments Table**:
-   - Columns: Rank, Business Name & Reg No, Industry, Assessment Date, Credit Score (visual bar), Risk Band Pill, Bank Turnover, Status, Actions.
-   - Instant filtering and sorting by score or risk band.
-
----
-
-## 3. Component Specifications
-
-### Buttons
-- **Primary**: Pill shaped (`border-radius: 100px`), `#FF6D63`, white bold text, slight lift on hover (`#E85B51`).
-- **Secondary**: Navy outline (`#0F253B`) or Sky Blue ghost (`#61B8D8`).
-- **Small Action Buttons**: Rounded `8px`, subtle hover background.
-
-### Status Badges & Pills
-- **Low Risk / Approved**: `#1AAE4E` text on `#E8F8EE` background.
-- **Medium Risk / Review**: `#FCB900` / `#D97706` text on `#FFF8E6` background.
-- **High Risk / Attention**: `#FF274B` text on `#FFEAEF` background.
-- **Pending**: `#5A6B76` text on `#F0F2F3` background.
-- **Thin File Badge**: Purple / Indigo accent (`#9982FF` or `#7A00DF` subtle pill).
-
-### Visual Hierarchy & Polish
-- Avoid cluttered tables; use generous padding (`16px` on table rows).
-- Ensure numeric values use South African Rand currency formatting (`R 1,240,000.00`).
-- Category scores rendered with clear percentages and visual meter bars.
+1. **Executive Metrics Row**: Total Assessed (5), Low Risk / Qualified (1), Medium Risk / Under Review (2), High Risk (1), Pending (1), Analyzed Volume (R2.48M).
+2. **Attention Banner**: Immediate warning for *Bright Construction* (Score: 384, High Risk, Thin File) and *Echo Tech Solutions* (Pending Assessment).
+3. **Business Detail Panel**:
+   - Credit score gauge (300–850) with risk band tags.
+   - Bank statement turnover metrics: Total Credits, Total Debits, Net Cash Flow, Months Analysed.
+   - Granular category score progress bars: Payment History, Credit Utilisation, Business Age, Cash Flow.
+4. **Ranked Assessments Table**:
+   - Qualification pills (Approved, In Review, Attention Needed, Pending).
+   - Multi-parameter filters (Date range, Credit score slider, Risk band checkboxes, Thin file toggle).
