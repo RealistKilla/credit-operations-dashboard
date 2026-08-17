@@ -60,11 +60,6 @@ export function Sidebar({
               onCloseMobileDrawer?.()
             }}
             accentColor="coral"
-            badge={
-              <span className="bg-white/10 text-white/90 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                Live
-              </span>
-            }
           />
 
           {/* 2. Businesses Dropdown (with Pending and Assessed sub-lists) */}
