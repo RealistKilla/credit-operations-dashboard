@@ -5,9 +5,21 @@ export const RISK_BANDS = {
   MEDIUM: 'Medium',
   HIGH: 'High',
   PENDING: 'Pending'
+} as const
+
+export type RiskBandKey = typeof RISK_BANDS[keyof typeof RISK_BANDS]
+
+export interface RiskBandConfig {
+  label: string
+  qualification: string
+  color: string
+  bgColor: string
+  textColor: string
+  borderColor: string
+  description: string
 }
 
-export const RISK_BAND_CONFIG = {
+export const RISK_BAND_CONFIG: Record<string, RiskBandConfig> = {
   [RISK_BANDS.LOW]: {
     label: 'Low Risk',
     qualification: 'Qualified / Approved',
@@ -46,14 +58,14 @@ export const RISK_BAND_CONFIG = {
   }
 }
 
-export const CATEGORY_ICONS = {
+export const CATEGORY_ICONS: Record<string, string> = {
   'Payment History': 'History',
   'Credit Utilisation': 'Percent',
   'Business Age': 'Building2',
   'Cash Flow': 'TrendingUp'
 }
 
-export const CATEGORY_DESCRIPTIONS = {
+export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   'Payment History': 'On-time debt servicing and supplier repayment track record.',
   'Credit Utilisation': 'Ratio of utilized revolving credit vs total approved limits.',
   'Business Age': 'Operating maturity and statutory registration continuity.',
@@ -64,4 +76,6 @@ export const NAV_ITEMS = {
   OVERVIEW: 'overview',
   BUSINESSES: 'businesses',
   ASSESSMENTS: 'assessments'
-}
+} as const
+
+export type NavItem = typeof NAV_ITEMS[keyof typeof NAV_ITEMS]
