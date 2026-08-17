@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useParams, useNavigate } from 'react-router-dom'
 import { Header } from '../components/layout/Header'
 import { Sidebar } from '../components/layout/Sidebar'
-import { useBusinesses, useAssessments } from '../api/queries'
+import { useBusinesses, useAssessments, useCreditReports } from '../api/queries'
 import { useSearch } from '../context/SearchContext'
 import { Skeleton } from '../components/ui/Skeleton'
 
@@ -10,14 +10,17 @@ export function DashboardLayout(): React.JSX.Element {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { searchQuery, setSearchQuery } = useSearch()
   const { businessId } = useParams<{ businessId?: string }>()
+  const navigate = useNavigate()
 
   const { data: businesses = [], isLoading: isBusinessesLoading } = useBusinesses()
   const { data: assessments = [], isLoading: isAssessmentsLoading } = useAssessments()
+  const { data: creditReports = [] } = useCreditReports()
 
-  // Calculate urgent alert count
-  const urgentAlertCount = assessments.filter(
-    (a) => a.status === 'Pending'
-  ).length
+  // Calculate urgent alert count (High risk or pending)
+  const urgentAlertCount = assessments.filter((a) => {
+    const report = creditReports.find((c) => c.assessmentId === a.id)
+    return a.status === 'Pending' || report?.riskBand === 'High'
+  }).length
 
   const selectedBusinessId = businessId ? parseInt(businessId, 10) : null
 
@@ -28,6 +31,7 @@ export function DashboardLayout(): React.JSX.Element {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         urgentAlertCount={urgentAlertCount}
+        onUrgentAlertClick={() => navigate('/overview')}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
       />
 
@@ -52,7 +56,7 @@ export function DashboardLayout(): React.JSX.Element {
               assessments={assessments.map((a) => ({
                 ...a,
                 business: businesses.find((b) => b.id === a.businessId) || null,
-                creditReport: null,
+                creditReport: creditReports.find((c) => c.assessmentId === a.id) || null,
                 bankStatement: null,
                 scoreItems: [],
                 netCashFlow: null
