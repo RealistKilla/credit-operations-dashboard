@@ -2,11 +2,9 @@ import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '../../../utils/cn'
 import { LayoutDashboard, FileCheck2 } from 'lucide-react'
-import { RISK_BANDS } from '../../../types/constants'
 import type { Business, EnrichedAssessment } from '../../../types/schemas'
 import { SidebarNavButton } from './SidebarNavButton'
 import { SidebarBusinessesDropdown } from './SidebarBusinessesDropdown'
-import { SidebarRiskPulse } from './SidebarRiskPulse'
 
 export interface SidebarProps {
   businesses: Business[]
@@ -34,9 +32,8 @@ export function Sidebar({
 
   // Calculate metrics for badges
   const totalBusinesses = businesses.length
-  const completedAssessments = assessments.filter((a) => a.status === 'Complete').length
-  const highRiskCount = assessments.filter(
-    (a) => a.creditReport?.riskBand === RISK_BANDS.HIGH
+  const completedAssessments = assessments.filter(
+    (a) => a.status === 'Complete'
   ).length
 
   return (
@@ -105,9 +102,6 @@ export function Sidebar({
             }
           />
         </div>
-
-        {/* Risk Pulse Card */}
-        <SidebarRiskPulse highRiskCount={highRiskCount} />
       </div>
     </aside>
   )
@@ -115,4 +109,3 @@ export function Sidebar({
 
 export * from './SidebarNavButton'
 export * from './SidebarBusinessesDropdown'
-export * from './SidebarRiskPulse'

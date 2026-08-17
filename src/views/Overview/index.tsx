@@ -10,6 +10,7 @@ import { useSearch } from '../../context/SearchContext'
 import { OverviewMetricsGrid } from './OverviewMetricsGrid'
 import { OverviewAttentionSection } from './OverviewAttentionSection'
 import { OverviewRecentAssessments } from './OverviewRecentAssessments'
+import { OverviewPendingAssessments } from './OverviewPendingAssessments'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
@@ -66,7 +67,7 @@ export function OverviewView(): React.JSX.Element {
     refetchBankStatements()
   }
 
-  // Filter assessments based on search query matching against businesses
+  // Filter assessments based on search query
   const filteredAssessments = useMemo(() => {
     if (!searchQuery) return assessments
     const query = searchQuery.toLowerCase()
@@ -88,6 +89,15 @@ export function OverviewView(): React.JSX.Element {
     })
   }, [assessments, businesses, creditReports, searchQuery])
 
+  // Split into Completed vs Pending
+  const completedAssessments = useMemo(() => {
+    return filteredAssessments.filter((a) => a.status === 'Complete')
+  }, [filteredAssessments])
+
+  const pendingAssessments = useMemo(() => {
+    return filteredAssessments.filter((a) => a.status === 'Pending')
+  }, [filteredAssessments])
+
   // Loading skeleton state
   if (isLoading) {
     return (
@@ -101,7 +111,10 @@ export function OverviewView(): React.JSX.Element {
             <Skeleton key={i} className="h-20" />
           ))}
         </div>
-        <Skeleton className="h-80" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <Skeleton className="h-72 lg:col-span-2" />
+          <Skeleton className="h-72 lg:col-span-1" />
+        </div>
       </div>
     )
   }
@@ -163,17 +176,33 @@ export function OverviewView(): React.JSX.Element {
         bankStatements={bankStatements}
       />
 
-      {/* 3. Assessed Businesses Table */}
-      <OverviewRecentAssessments
-        businesses={businesses}
-        assessments={filteredAssessments}
-        creditReports={creditReports}
-        bankStatements={bankStatements}
-        onSelectBusiness={(businessId) => {
-          navigate(`/businesses/${businessId}`)
-        }}
-        onViewAllAssessments={() => navigate('/assessments')}
-      />
+      {/* 3. Side-by-side Tables: Assessed Businesses (Left) + Pending Queue (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+        {/* Assessed Businesses (2 Columns) */}
+        <div className="lg:col-span-2">
+          <OverviewRecentAssessments
+            businesses={businesses}
+            completedAssessments={completedAssessments}
+            creditReports={creditReports}
+            bankStatements={bankStatements}
+            onSelectBusiness={(businessId) => {
+              navigate(`/businesses/${businessId}`)
+            }}
+            onViewAllAssessments={() => navigate('/assessments')}
+          />
+        </div>
+
+        {/* Pending Queue Table (1 Column) */}
+        <div className="lg:col-span-1">
+          <OverviewPendingAssessments
+            businesses={businesses}
+            pendingAssessments={pendingAssessments}
+            onSelectBusiness={(businessId) => {
+              navigate(`/businesses/${businessId}`)
+            }}
+          />
+        </div>
+      </div>
     </div>
   )
 }
@@ -181,3 +210,4 @@ export function OverviewView(): React.JSX.Element {
 export * from './OverviewMetricsGrid'
 export * from './OverviewAttentionSection'
 export * from './OverviewRecentAssessments'
+export * from './OverviewPendingAssessments'

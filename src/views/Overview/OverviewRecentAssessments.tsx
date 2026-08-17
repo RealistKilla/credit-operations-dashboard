@@ -4,11 +4,11 @@ import { RiskBadge } from '../../components/ui/RiskBadge'
 import { Button } from '../../components/ui/Button'
 import { formatCurrency, formatDate } from '../../utils/formatters'
 import type { Business, Assessment, CreditReport, BankStatement } from '../../types/schemas'
-import { ArrowRight, Building2, Calendar } from 'lucide-react'
+import { ArrowRight, Building2, Calendar, CheckCircle2 } from 'lucide-react'
 
 export interface OverviewRecentAssessmentsProps {
   businesses: Business[]
-  assessments: Assessment[]
+  completedAssessments: Assessment[]
   creditReports: CreditReport[]
   bankStatements: BankStatement[]
   onSelectBusiness: (businessId: number) => void
@@ -17,16 +17,24 @@ export interface OverviewRecentAssessmentsProps {
 
 export function OverviewRecentAssessments({
   businesses,
-  assessments,
+  completedAssessments,
   creditReports,
   bankStatements,
   onSelectBusiness,
   onViewAllAssessments
 }: OverviewRecentAssessmentsProps): React.JSX.Element {
   return (
-    <Card className="p-0 overflow-hidden shadow-sm">
-      <CardHeader className="border-b border-[#F0F2F3] bg-[#F5F7F9]/50 flex-row items-center justify-between space-y-0 py-4">
-        <CardTitle className="text-sm">Assessed Businesses ({assessments.length})</CardTitle>
+    <Card className="p-0 overflow-hidden shadow-sm flex flex-col h-full">
+      <CardHeader className="border-b border-[#F0F2F3] bg-[#F5F7F9]/50 flex-row items-center justify-between space-y-0 py-3.5 px-4">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 bg-[#1AAE4E] text-white rounded-lg">
+            <CheckCircle2 className="w-4 h-4" />
+          </div>
+          <div>
+            <CardTitle className="text-sm">Assessed Businesses ({completedAssessments.length})</CardTitle>
+            <p className="text-[11px] text-[#5A6B76]">Fully indexed credit profiles & bank records</p>
+          </div>
+        </div>
         <Button
           variant="outline"
           size="sm"
@@ -34,11 +42,11 @@ export function OverviewRecentAssessments({
           rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
           className="text-xs"
         >
-          View Assessments Tab
+          View Full Ranking
         </Button>
       </CardHeader>
 
-      <CardContent className="p-0">
+      <CardContent className="p-0 flex-1">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
@@ -48,12 +56,12 @@ export function OverviewRecentAssessments({
                 <th className="py-3 px-4">Date</th>
                 <th className="py-3 px-4">Score</th>
                 <th className="py-3 px-4">Risk Band</th>
-                <th className="py-3 px-4">Total Credits</th>
+                <th className="py-3 px-4">Turnover (Credits)</th>
                 <th className="py-3 px-4 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F0F2F3]">
-              {assessments.map((assessment) => {
+              {completedAssessments.map((assessment) => {
                 const business = businesses.find((b) => b.id === assessment.businessId)
                 const report = creditReports.find((c) => c.assessmentId === assessment.id)
                 const statement = bankStatements.find((b) => b.assessmentId === assessment.id)
@@ -66,7 +74,7 @@ export function OverviewRecentAssessments({
                     onClick={() => onSelectBusiness(assessment.businessId)}
                   >
                     {/* Business Name & Reg */}
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-lg bg-[#F2F9FC] text-[#0F253B] flex items-center justify-center font-bold text-xs shrink-0">
                           {business?.name ? business.name.charAt(0) : <Building2 className="w-3.5 h-3.5" />}
@@ -83,12 +91,12 @@ export function OverviewRecentAssessments({
                     </td>
 
                     {/* Industry */}
-                    <td className="py-3 px-4 text-[#5A6B76]">
+                    <td className="py-3.5 px-4 text-[#5A6B76]">
                       {business?.industry || '—'}
                     </td>
 
                     {/* Date */}
-                    <td className="py-3 px-4 text-[#5A6B76] whitespace-nowrap">
+                    <td className="py-3.5 px-4 text-[#5A6B76] whitespace-nowrap">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3 text-[#839098]" />
                         <span>{formatDate(assessment.createdDate)}</span>
@@ -96,7 +104,7 @@ export function OverviewRecentAssessments({
                     </td>
 
                     {/* Score */}
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       {score != null ? (
                         <span className="font-bold text-[#0F253B] text-sm tabular-nums">
                           {score}
@@ -107,7 +115,7 @@ export function OverviewRecentAssessments({
                     </td>
 
                     {/* Risk Band */}
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <RiskBadge
                         riskBand={report?.riskBand}
                         isThinFile={report?.isThinFile}
@@ -116,14 +124,14 @@ export function OverviewRecentAssessments({
                     </td>
 
                     {/* Total Credits */}
-                    <td className="py-3 px-4 font-semibold text-[#0F253B] tabular-nums whitespace-nowrap">
+                    <td className="py-3.5 px-4 font-semibold text-[#0F253B] tabular-nums whitespace-nowrap">
                       {statement?.totalCredits != null
                         ? formatCurrency(statement.totalCredits)
                         : <span className="text-[#839098] italic text-xs">Pending</span>}
                     </td>
 
                     {/* Action */}
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <Button
                         variant="ghost"
                         size="sm"
