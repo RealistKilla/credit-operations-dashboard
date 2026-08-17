@@ -11,24 +11,29 @@ import { formatCurrency } from '../../utils/formatters'
 import type { Business, Assessment, CreditReport, BankStatement } from '../../types/schemas'
 
 export interface OverviewMetricsGridProps {
-  businesses: Business[]
-  assessments: Assessment[]
-  creditReports: CreditReport[]
-  bankStatements: BankStatement[]
+  businesses?: Business[]
+  assessments?: Assessment[]
+  creditReports?: CreditReport[]
+  bankStatements?: BankStatement[]
 }
 
 export function OverviewMetricsGrid({
-  businesses,
-  assessments,
-  creditReports,
-  bankStatements
+  businesses = [],
+  assessments = [],
+  creditReports = [],
+  bankStatements = []
 }: OverviewMetricsGridProps): React.JSX.Element {
-  const totalBusinesses = businesses.length
-  const completedCount = assessments.filter((a) => a.status === 'Complete').length
-  const pendingCount = assessments.filter((a) => a.status === 'Pending').length
-  const highRiskCount = creditReports.filter((c) => c.riskBand === 'High').length
+  const safeBusinesses = Array.isArray(businesses) ? businesses : []
+  const safeAssessments = Array.isArray(assessments) ? assessments : []
+  const safeCreditReports = Array.isArray(creditReports) ? creditReports : []
+  const safeBankStatements = Array.isArray(bankStatements) ? bankStatements : []
 
-  const totalCredits = bankStatements.reduce((sum, b) => {
+  const totalBusinesses = safeBusinesses.length
+  const completedCount = safeAssessments.filter((a) => a.status === 'Complete').length
+  const pendingCount = safeAssessments.filter((a) => a.status === 'Pending').length
+  const highRiskCount = safeCreditReports.filter((c) => c.riskBand === 'High').length
+
+  const totalCredits = safeBankStatements.reduce((sum, b) => {
     return sum + (b.totalCredits ?? 0)
   }, 0)
 

@@ -7,22 +7,24 @@ import type { Business, Assessment, CreditReport, BankStatement } from '../../ty
 import { ArrowRight, Building2, Calendar, CheckCircle2 } from 'lucide-react'
 
 export interface OverviewRecentAssessmentsProps {
-  businesses: Business[]
-  completedAssessments: Assessment[]
-  creditReports: CreditReport[]
-  bankStatements: BankStatement[]
+  businesses?: Business[]
+  completedAssessments?: Assessment[]
+  creditReports?: CreditReport[]
+  bankStatements?: BankStatement[]
   onSelectBusiness: (businessId: number) => void
   onViewAllAssessments: () => void
 }
 
 export function OverviewRecentAssessments({
-  businesses,
-  completedAssessments,
-  creditReports,
-  bankStatements,
+  businesses = [],
+  completedAssessments = [],
+  creditReports = [],
+  bankStatements = [],
   onSelectBusiness,
   onViewAllAssessments
 }: OverviewRecentAssessmentsProps): React.JSX.Element {
+  const safeList = Array.isArray(completedAssessments) ? completedAssessments : []
+
   return (
     <Card className="p-0 overflow-hidden shadow-sm flex flex-col h-full">
       <CardHeader className="border-b border-[#F0F2F3] bg-[#F5F7F9]/50 flex-row items-center justify-between space-y-0 py-3.5 px-4">
@@ -31,7 +33,7 @@ export function OverviewRecentAssessments({
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
-            <CardTitle className="text-sm">Assessed Businesses ({completedAssessments.length})</CardTitle>
+            <CardTitle className="text-sm">Assessed Businesses ({safeList.length})</CardTitle>
             <p className="text-[11px] text-[#5A6B76]">Fully indexed credit profiles & bank records</p>
           </div>
         </div>
@@ -61,10 +63,10 @@ export function OverviewRecentAssessments({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F0F2F3]">
-              {completedAssessments.map((assessment) => {
-                const business = businesses.find((b) => b.id === assessment.businessId)
-                const report = creditReports.find((c) => c.assessmentId === assessment.id)
-                const statement = bankStatements.find((b) => b.assessmentId === assessment.id)
+              {safeList.map((assessment) => {
+                const business = (businesses || []).find((b) => b.id === assessment.businessId)
+                const report = (creditReports || []).find((c) => c.assessmentId === assessment.id)
+                const statement = (bankStatements || []).find((b) => b.assessmentId === assessment.id)
                 const score = report?.score
 
                 return (

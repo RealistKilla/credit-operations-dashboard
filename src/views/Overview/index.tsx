@@ -12,8 +12,7 @@ import { OverviewAttentionSection } from './OverviewAttentionSection'
 import { OverviewRecentAssessments } from './OverviewRecentAssessments'
 import { OverviewPendingAssessments } from './OverviewPendingAssessments'
 import { Skeleton } from '../../components/ui/Skeleton'
-import { AlertCircle, RefreshCw } from 'lucide-react'
-import { Button } from '../../components/ui/Button'
+import { ErrorState } from '../../components/ui/ErrorState'
 
 export function OverviewView(): React.JSX.Element {
   const navigate = useNavigate()
@@ -24,6 +23,7 @@ export function OverviewView(): React.JSX.Element {
     data: businesses = [],
     isLoading: isBusinessesLoading,
     isError: isBusinessesError,
+    isFetching: isBusinessesFetching,
     refetch: refetchBusinesses
   } = useBusinesses()
 
@@ -31,6 +31,7 @@ export function OverviewView(): React.JSX.Element {
     data: assessments = [],
     isLoading: isAssessmentsLoading,
     isError: isAssessmentsError,
+    isFetching: isAssessmentsFetching,
     refetch: refetchAssessments
   } = useAssessments()
 
@@ -38,6 +39,7 @@ export function OverviewView(): React.JSX.Element {
     data: creditReports = [],
     isLoading: isCreditReportsLoading,
     isError: isCreditReportsError,
+    isFetching: isCreditReportsFetching,
     refetch: refetchCreditReports
   } = useCreditReports()
 
@@ -45,6 +47,7 @@ export function OverviewView(): React.JSX.Element {
     data: bankStatements = [],
     isLoading: isBankStatementsLoading,
     isError: isBankStatementsError,
+    isFetching: isBankStatementsFetching,
     refetch: refetchBankStatements
   } = useBankStatements()
 
@@ -60,6 +63,12 @@ export function OverviewView(): React.JSX.Element {
     isCreditReportsError ||
     isBankStatementsError
 
+  const isRetrying =
+    isBusinessesFetching ||
+    isAssessmentsFetching ||
+    isCreditReportsFetching ||
+    isBankStatementsFetching
+
   const refetchAll = () => {
     refetchBusinesses()
     refetchAssessments()
@@ -69,11 +78,15 @@ export function OverviewView(): React.JSX.Element {
 
   // Filter assessments based on search query
   const filteredAssessments = useMemo(() => {
-    if (!searchQuery) return assessments
+    const safeAssessments = Array.isArray(assessments) ? assessments : []
+    const safeBusinesses = Array.isArray(businesses) ? businesses : []
+    const safeCreditReports = Array.isArray(creditReports) ? creditReports : []
+
+    if (!searchQuery) return safeAssessments
     const query = searchQuery.toLowerCase()
-    return assessments.filter((assessment) => {
-      const business = businesses.find((b) => b.id === assessment.businessId)
-      const report = creditReports.find((c) => c.assessmentId === assessment.id)
+    return safeAssessments.filter((assessment) => {
+      const business = safeBusinesses.find((b) => b.id === assessment.businessId)
+      const report = safeCreditReports.find((c) => c.assessmentId === assessment.id)
       const name = business?.name.toLowerCase() || ''
       const reg = business?.registrationNumber.toLowerCase() || ''
       const industry = business?.industry.toLowerCase() || ''
@@ -91,11 +104,11 @@ export function OverviewView(): React.JSX.Element {
 
   // Split into Completed vs Pending
   const completedAssessments = useMemo(() => {
-    return filteredAssessments.filter((a) => a.status === 'Complete')
+    return (filteredAssessments || []).filter((a) => a.status === 'Complete')
   }, [filteredAssessments])
 
   const pendingAssessments = useMemo(() => {
-    return filteredAssessments.filter((a) => a.status === 'Pending')
+    return (filteredAssessments || []).filter((a) => a.status === 'Pending')
   }, [filteredAssessments])
 
   // Loading skeleton state
@@ -122,27 +135,12 @@ export function OverviewView(): React.JSX.Element {
   // Error recovery state
   if (isError) {
     return (
-      <div className="bg-[#FFEEF2] border border-[#FECDD3] rounded-2xl p-8 text-center max-w-lg mx-auto mt-12 space-y-4">
-        <div className="w-12 h-12 rounded-full bg-[#FF274B]/10 text-[#FF274B] flex items-center justify-center mx-auto">
-          <AlertCircle className="w-6 h-6" />
-        </div>
-        <div>
-          <h3 className="text-lg font-bold text-[#0F253B]">Error Fetching Overview Data</h3>
-          <p className="text-xs text-[#5A6B76] mt-1.5">
-            Unable to connect to the backend server. Please verify that the API server is active on port 3001.
-          </p>
-          <div className="mt-2 bg-[#0F253B] text-[#61B8D8] font-mono text-xs py-2 px-3 rounded-lg inline-block">
-            npm run api
-          </div>
-        </div>
-        <Button
-          variant="primary"
-          onClick={refetchAll}
-          leftIcon={<RefreshCw className="w-4 h-4" />}
-        >
-          Retry Connection
-        </Button>
-      </div>
+      <ErrorState
+        title="Oops, something went wrong!"
+        message="Please try again or contact support. Ensure the local json-server API is running on port 3001."
+        onRetry={refetchAll}
+        isRetrying={isRetrying}
+      />
     )
   }
 

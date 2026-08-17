@@ -4,18 +4,22 @@ import type { Business, Assessment, CreditReport } from '../../types/schemas'
 import { RISK_BANDS } from '../../types/constants'
 
 export interface OverviewAttentionSectionProps {
-  businesses: Business[]
-  assessments: Assessment[]
-  creditReports: CreditReport[]
+  businesses?: Business[]
+  assessments?: Assessment[]
+  creditReports?: CreditReport[]
   onSelectBusiness: (businessId: number) => void
 }
 
 export function OverviewAttentionSection({
-  businesses,
-  assessments,
-  creditReports,
+  businesses = [],
+  assessments = [],
+  creditReports = [],
   onSelectBusiness
 }: OverviewAttentionSectionProps): React.JSX.Element | null {
+  const safeBusinesses = Array.isArray(businesses) ? businesses : []
+  const safeAssessments = Array.isArray(assessments) ? assessments : []
+  const safeCreditReports = Array.isArray(creditReports) ? creditReports : []
+
   // Find accounts needing attention: High Risk or Pending Assessment
   const attentionItems: {
     businessId: number
@@ -23,9 +27,9 @@ export function OverviewAttentionSection({
     reason: string
   }[] = []
 
-  assessments.forEach((assessment) => {
-    const business = businesses.find((b) => b.id === assessment.businessId)
-    const report = creditReports.find((c) => c.assessmentId === assessment.id)
+  safeAssessments.forEach((assessment) => {
+    const business = safeBusinesses.find((b) => b.id === assessment.businessId)
+    const report = safeCreditReports.find((c) => c.assessmentId === assessment.id)
     const name = business?.name || `Business #${assessment.businessId}`
 
     if (report?.riskBand === RISK_BANDS.HIGH) {

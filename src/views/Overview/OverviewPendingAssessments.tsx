@@ -6,16 +6,18 @@ import type { Business, Assessment } from '../../types/schemas'
 import { Clock, AlertCircle, Building2, ArrowRight } from 'lucide-react'
 
 export interface OverviewPendingAssessmentsProps {
-  businesses: Business[]
-  pendingAssessments: Assessment[]
+  businesses?: Business[]
+  pendingAssessments?: Assessment[]
   onSelectBusiness: (businessId: number) => void
 }
 
 export function OverviewPendingAssessments({
-  businesses,
-  pendingAssessments,
+  businesses = [],
+  pendingAssessments = [],
   onSelectBusiness
 }: OverviewPendingAssessmentsProps): React.JSX.Element {
+  const safeList = Array.isArray(pendingAssessments) ? pendingAssessments : []
+
   return (
     <Card className="p-0 overflow-hidden shadow-sm border-[#FED7AA] bg-white flex flex-col h-full">
       <CardHeader className="border-b border-[#FED7AA]/60 bg-[#FFF8E6] flex-row items-center justify-between space-y-0 py-3.5 px-4">
@@ -26,7 +28,7 @@ export function OverviewPendingAssessments({
           <div>
             <CardTitle className="text-sm text-[#0F253B]">Pending Queue</CardTitle>
             <p className="text-[11px] text-[#B45309] font-medium">
-              {pendingAssessments.length} Assessment{pendingAssessments.length !== 1 ? 's' : ''} Awaiting Ingestion
+              {safeList.length} Assessment{safeList.length !== 1 ? 's' : ''} Awaiting Ingestion
             </p>
           </div>
         </div>
@@ -36,7 +38,7 @@ export function OverviewPendingAssessments({
       </CardHeader>
 
       <CardContent className="p-0 flex-1 flex flex-col justify-between">
-        {pendingAssessments.length === 0 ? (
+        {safeList.length === 0 ? (
           <div className="p-6 text-center text-[#839098] space-y-2">
             <div className="w-8 h-8 rounded-full bg-[#E8F8EE] text-[#15803D] flex items-center justify-center mx-auto">
               ✓
@@ -45,8 +47,8 @@ export function OverviewPendingAssessments({
           </div>
         ) : (
           <div className="divide-y divide-[#F0F2F3]">
-            {pendingAssessments.map((assessment) => {
-              const business = businesses.find((b) => b.id === assessment.businessId)
+            {safeList.map((assessment) => {
+              const business = (businesses || []).find((b) => b.id === assessment.businessId)
               return (
                 <div
                   key={assessment.id}

@@ -1,11 +1,13 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { DashboardLayout } from './layouts/DashboardLayout'
 import { OverviewView } from './views/Overview'
+import { RootErrorBoundary } from './components/layout/RootErrorBoundary'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <DashboardLayout />,
+    errorElement: <RootErrorBoundary />,
     children: [
       {
         index: true,
@@ -13,7 +15,8 @@ export const router = createBrowserRouter([
       },
       {
         path: 'overview',
-        element: <OverviewView />
+        element: <OverviewView />,
+        errorElement: <RootErrorBoundary />
       },
       {
         path: 'businesses',
