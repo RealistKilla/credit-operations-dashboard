@@ -11,6 +11,7 @@ import { BusinessProfileHeader } from './BusinessProfileHeader'
 import { BusinessCreditScoreCard } from './BusinessCreditScoreCard'
 import { BusinessFinancialAnalysis } from './BusinessFinancialAnalysis'
 import { BusinessCategoryScoreBreakdown } from './BusinessCategoryScoreBreakdown'
+import { BusinessDecisionActionBar } from './BusinessDecisionActionBar'
 import { BusinessPendingState } from './BusinessPendingState'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { ErrorState } from '../../components/ui/ErrorState'
@@ -99,26 +100,26 @@ export function BusinessesView(): React.JSX.Element {
 
   // Derive selected business data
   const business = useMemo(() => {
-    return businesses.find((b) => b.id === currentBusinessId) || null
+    return (businesses || []).find((b) => b.id === currentBusinessId) || null
   }, [businesses, currentBusinessId])
 
   const assessment = useMemo(() => {
-    return assessments.find((a) => a.businessId === currentBusinessId) || null
+    return (assessments || []).find((a) => a.businessId === currentBusinessId) || null
   }, [assessments, currentBusinessId])
 
   const creditReport = useMemo(() => {
     if (!assessment) return null
-    return creditReports.find((c) => c.assessmentId === assessment.id) || null
+    return (creditReports || []).find((c) => c.assessmentId === assessment.id) || null
   }, [creditReports, assessment])
 
   const bankStatement = useMemo(() => {
     if (!assessment) return null
-    return bankStatements.find((b) => b.assessmentId === assessment.id) || null
+    return (bankStatements || []).find((b) => b.assessmentId === assessment.id) || null
   }, [bankStatements, assessment])
 
   const businessScoreItems = useMemo(() => {
     if (!assessment) return []
-    return scoreItems.filter((s) => s.assessmentId === assessment.id)
+    return (scoreItems || []).filter((s) => s.assessmentId === assessment.id)
   }, [scoreItems, assessment])
 
   // Loading skeleton placeholder
@@ -190,8 +191,14 @@ export function BusinessesView(): React.JSX.Element {
             <BusinessFinancialAnalysis bankStatement={bankStatement} />
           </div>
 
-          {/* Bottom Section: Category Sub-Scores Breakdown */}
+          {/* Middle Section: Category Sub-Scores Breakdown */}
           <BusinessCategoryScoreBreakdown scoreItems={businessScoreItems} />
+
+          {/* Bottom Section: Handover Actions Bar (Accept / Request Info / Decline) */}
+          <BusinessDecisionActionBar
+            businessName={business.name}
+            riskBand={creditReport?.riskBand}
+          />
         </>
       )}
     </div>
@@ -202,4 +209,5 @@ export * from './BusinessProfileHeader'
 export * from './BusinessCreditScoreCard'
 export * from './BusinessFinancialAnalysis'
 export * from './BusinessCategoryScoreBreakdown'
+export * from './BusinessDecisionActionBar'
 export * from './BusinessPendingState'
