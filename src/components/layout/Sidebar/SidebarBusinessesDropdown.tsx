@@ -90,7 +90,7 @@ export function SidebarBusinessesDropdown({
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#FF6D63]">
                 <Clock className="w-3 h-3" />
-                <span>Pending Assessment ({pendingBusinesses.length})</span>
+                <span>Pending ({pendingBusinesses.length})</span>
               </div>
 
               {pendingBusinesses.map(({ business }) => {
@@ -134,13 +134,12 @@ export function SidebarBusinessesDropdown({
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#61B8D8]">
                 <CheckCircle2 className="w-3 h-3" />
-                <span>Assessed & Ranked ({assessedBusinesses.length})</span>
+                <span>Assessed ({assessedBusinesses.length})</span>
               </div>
 
               {assessedBusinesses.map(({ business, assessment }) => {
                 const isSelected = isActiveTab && selectedBusinessId === business.id
                 const riskBand = assessment?.creditReport?.riskBand
-                const score = assessment?.creditReport?.score
 
                 return (
                   <button
@@ -168,38 +167,13 @@ export function SidebarBusinessesDropdown({
                       </div>
                     </div>
 
-                    {/* Risk indicator with score */}
-                    <div className="flex items-center gap-1 shrink-0">
-                      {score != null && (
-                        <span
-                          className={cn(
-                            'text-[10px] font-bold',
-                            isSelected ? 'text-[#0F253B]' : 'text-white/70'
-                          )}
-                        >
-                          {score}
-                        </span>
-                      )}
-
-                      {riskBand === RISK_BANDS.LOW && (
-                        <span
-                          className="w-2 h-2 rounded-full bg-[#1AAE4E] inline-block"
-                          title="Low Risk / Approved"
-                        />
-                      )}
-                      {riskBand === RISK_BANDS.MEDIUM && (
-                        <span
-                          className="w-2 h-2 rounded-full bg-[#D97706] inline-block"
-                          title="Medium Risk / Review"
-                        />
-                      )}
-                      {riskBand === RISK_BANDS.HIGH && (
-                        <span
-                          className="w-2 h-2 rounded-full bg-[#FF274B] inline-block animate-pulse"
-                          title="High Risk / Attention Needed"
-                        />
-                      )}
-                    </div>
+                    {/* Red dot for High Risk businesses only */}
+                    {riskBand === RISK_BANDS.HIGH && (
+                      <span
+                        className="w-2.5 h-2.5 rounded-full bg-[#FF274B] shrink-0 animate-pulse"
+                        title="High Risk - Needs Attention"
+                      />
+                    )}
                   </button>
                 )
               })}
