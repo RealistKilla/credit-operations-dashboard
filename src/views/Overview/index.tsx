@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   useBusinesses,
   useAssessments,
@@ -6,27 +7,20 @@ import {
   useBankStatements,
   useScoreItems
 } from '../../api/queries'
+import { useSearch } from '../../context/SearchContext'
 import { OverviewMetricsGrid } from './OverviewMetricsGrid'
 import { OverviewAttentionSection } from './OverviewAttentionSection'
 import { OverviewPortfolioDistribution } from './OverviewPortfolioDistribution'
 import { OverviewRecentAssessments } from './OverviewRecentAssessments'
-import { NAV_ITEMS, type NavItem } from '../../types/constants'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { Sparkles, AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
 import type { EnrichedAssessment } from '../../types/schemas'
 
-export interface OverviewViewProps {
-  searchQuery: string
-  onSelectBusiness: (businessId: number) => void
-  onNavigateTab: (tab: NavItem) => void
-}
+export function OverviewView(): React.JSX.Element {
+  const navigate = useNavigate()
+  const { searchQuery } = useSearch()
 
-export function OverviewView({
-  searchQuery,
-  onSelectBusiness,
-  onNavigateTab
-}: OverviewViewProps): React.JSX.Element {
   // TanStack Query Hooks for data fetching
   const {
     data: businesses = [],
@@ -210,8 +204,7 @@ export function OverviewView({
       <OverviewAttentionSection
         assessments={enrichedAssessments}
         onSelectBusiness={(businessId) => {
-          onNavigateTab(NAV_ITEMS.BUSINESSES)
-          onSelectBusiness(businessId)
+          navigate(`/businesses/${businessId}`)
         }}
       />
 
@@ -219,7 +212,7 @@ export function OverviewView({
       <OverviewMetricsGrid
         totalBusinessesCount={businesses.length}
         assessments={enrichedAssessments}
-        onFilterRiskBand={() => onNavigateTab(NAV_ITEMS.ASSESSMENTS)}
+        onFilterRiskBand={() => navigate('/assessments')}
       />
 
       {/* 3. Portfolio Risk Distribution & Cash Flow Velocity */}
@@ -229,10 +222,9 @@ export function OverviewView({
       <OverviewRecentAssessments
         assessments={filteredAssessments}
         onSelectBusiness={(businessId) => {
-          onNavigateTab(NAV_ITEMS.BUSINESSES)
-          onSelectBusiness(businessId)
+          navigate(`/businesses/${businessId}`)
         }}
-        onViewAllAssessments={() => onNavigateTab(NAV_ITEMS.ASSESSMENTS)}
+        onViewAllAssessments={() => navigate('/assessments')}
       />
     </div>
   )

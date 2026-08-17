@@ -1,32 +1,36 @@
 import React, { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '../../../utils/cn'
 import { LayoutDashboard, FileCheck2 } from 'lucide-react'
-import { NAV_ITEMS, type NavItem, RISK_BANDS } from '../../../types/constants'
+import { RISK_BANDS } from '../../../types/constants'
 import type { Business, EnrichedAssessment } from '../../../types/schemas'
 import { SidebarNavButton } from './SidebarNavButton'
 import { SidebarBusinessesDropdown } from './SidebarBusinessesDropdown'
 import { SidebarRiskPulse } from './SidebarRiskPulse'
 
 export interface SidebarProps {
-  activeTab: NavItem
-  onTabChange: (tab: NavItem) => void
   businesses: Business[]
   assessments: EnrichedAssessment[]
-  selectedBusinessId: number | null
-  onSelectBusiness: (businessId: number) => void
+  selectedBusinessId?: number | null
   className?: string
+  onCloseMobileDrawer?: () => void
 }
 
 export function Sidebar({
-  activeTab,
-  onTabChange,
   businesses,
   assessments,
   selectedBusinessId,
-  onSelectBusiness,
-  className
+  className,
+  onCloseMobileDrawer
 }: SidebarProps): React.JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [businessesOpen, setBusinessesOpen] = useState(true)
+
+  const pathname = location.pathname
+  const isOverview = pathname === '/' || pathname.startsWith('/overview')
+  const isBusinesses = pathname.startsWith('/businesses')
+  const isAssessments = pathname.startsWith('/assessments')
 
   // Calculate metrics for badges
   const totalBusinesses = businesses.length
@@ -53,8 +57,11 @@ export function Sidebar({
           <SidebarNavButton
             label="Overview"
             icon={<LayoutDashboard className="w-4 h-4" />}
-            isActive={activeTab === NAV_ITEMS.OVERVIEW}
-            onClick={() => onTabChange(NAV_ITEMS.OVERVIEW)}
+            isActive={isOverview}
+            onClick={() => {
+              navigate('/overview')
+              onCloseMobileDrawer?.()
+            }}
             accentColor="coral"
             badge={
               <span className="bg-white/10 text-white/90 text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -67,20 +74,29 @@ export function Sidebar({
           <SidebarBusinessesDropdown
             isOpen={businessesOpen}
             onToggleOpen={() => setBusinessesOpen(!businessesOpen)}
-            isActiveTab={activeTab === NAV_ITEMS.BUSINESSES}
-            onSelectTab={() => onTabChange(NAV_ITEMS.BUSINESSES)}
+            isActiveTab={isBusinesses}
+            onSelectTab={() => {
+              navigate('/businesses/1')
+              onCloseMobileDrawer?.()
+            }}
             businesses={businesses}
             assessments={assessments}
-            selectedBusinessId={selectedBusinessId}
-            onSelectBusiness={onSelectBusiness}
+            selectedBusinessId={selectedBusinessId ?? null}
+            onSelectBusiness={(id) => {
+              navigate(`/businesses/${id}`)
+              onCloseMobileDrawer?.()
+            }}
           />
 
           {/* 3. Assessments & Ranking */}
           <SidebarNavButton
             label="Assessments"
             icon={<FileCheck2 className="w-4 h-4" />}
-            isActive={activeTab === NAV_ITEMS.ASSESSMENTS}
-            onClick={() => onTabChange(NAV_ITEMS.ASSESSMENTS)}
+            isActive={isAssessments}
+            onClick={() => {
+              navigate('/assessments')
+              onCloseMobileDrawer?.()
+            }}
             accentColor="green"
             badge={
               <span className="bg-[#1AAE4E]/20 text-[#1AAE4E] text-[10px] font-bold px-1.5 py-0.5 rounded">
