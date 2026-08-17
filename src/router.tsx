@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { DashboardLayout } from './layouts/DashboardLayout'
 import { OverviewView } from './views/Overview'
 import { BusinessesView } from './views/Businesses'
+import { AssessmentsView } from './views/Assessments'
 import { RootErrorBoundary } from './components/layout/RootErrorBoundary'
 
 export const router = createBrowserRouter([
@@ -30,12 +31,8 @@ export const router = createBrowserRouter([
       },
       {
         path: 'assessments',
-        element: (
-          <div className="p-8 text-center text-[#5A6B76] bg-white rounded-2xl border border-[rgba(0,0,0,0.08)] shadow-sm">
-            <p className="font-bold text-lg text-[#0F253B]">Assessments & Qualification Ranking</p>
-            <p className="text-xs mt-1">Multi-Filter Credit Ranking Table (TICK-05)</p>
-          </div>
-        )
+        element: <AssessmentsView />,
+        errorElement: <RootErrorBoundary />
       },
       {
         path: '*',
