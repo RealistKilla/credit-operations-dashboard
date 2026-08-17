@@ -126,11 +126,10 @@ export default function App(): React.JSX.Element {
             </div>
           )}
 
-          {!isLoading && !isError && dashboardData && (
+          {!isLoading && !isError && (
             <>
               {activeTab === NAV_ITEMS.OVERVIEW && (
                 <OverviewView
-                  dashboardData={dashboardData}
                   searchQuery={searchQuery}
                   onSelectBusiness={(businessId) => {
                     setSelectedBusinessId(businessId)
