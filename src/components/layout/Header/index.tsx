@@ -6,16 +6,12 @@ import { HeaderActions } from './HeaderActions'
 export interface HeaderProps {
   searchQuery: string
   onSearchChange: (query: string) => void
-  urgentAlertCount?: number
-  onUrgentAlertClick?: () => void
   onToggleSidebar?: () => void
 }
 
 export function Header({
   searchQuery,
   onSearchChange,
-  urgentAlertCount = 0,
-  onUrgentAlertClick,
   onToggleSidebar
 }: HeaderProps): React.JSX.Element {
   return (
@@ -25,10 +21,7 @@ export function Header({
 
         <HeaderSearch searchQuery={searchQuery} onSearchChange={onSearchChange} />
 
-        <HeaderActions
-          urgentAlertCount={urgentAlertCount}
-          onUrgentAlertClick={onUrgentAlertClick}
-        />
+        <HeaderActions />
       </div>
 
       <HeaderSearch
